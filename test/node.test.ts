@@ -6,7 +6,7 @@ import type {
 	NodeExecutionHint,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ACTOR_ID } from '../nodes/WebsiteContacts/apify';
 import { WebsiteContacts } from '../nodes/WebsiteContacts/WebsiteContacts.node';
@@ -49,6 +49,12 @@ const runData = (status: string, extra: IDataObject = {}) =>
 function execute(setup: Setup) {
 	const requests: IHttpRequestOptions[] = [];
 	const hints: NodeExecutionHint[] = [];
+	const route = (options: IHttpRequestOptions) => {
+		const path = new URL(options.url).pathname;
+		const handler = setup.routes[`${options.method} ${path}`];
+		if (!handler) throw new Error(`no route for ${options.method} ${path}`);
+		return handler(options);
+	};
 	const context = {
 		getInputData: () => setup.websites.map((website) => ({ json: { website } })),
 		getNodeParameter: (name: string, i: number, fallback?: unknown) => {
@@ -62,13 +68,20 @@ function execute(setup: Setup) {
 		continueOnFail: () => setup.continueOnFail ?? false,
 		getExecutionCancelSignal: () => setup.signal,
 		addExecutionHints: (...added: NodeExecutionHint[]) => hints.push(...added),
+		getCredentials: async (type: string) => {
+			expect(type).toBe('apifyApi');
+			return { apiKey: 'apify-token' };
+		},
 		helpers: {
 			httpRequestWithAuthentication: async (credential: string, options: IHttpRequestOptions) => {
 				expect(credential).toBe('apifyApi');
+				// Like n8n, which ties authenticated requests to the execution's cancel signal.
+				if (setup.signal?.aborted) throw new Error('This operation was aborted');
 				requests.push(options);
-				const path = new URL(options.url).pathname;
-				const route = setup.routes[`${options.method} ${path}`];
-				if (!route) throw new Error(`no route for ${options.method} ${path}`);
+				return route(options);
+			},
+			httpRequest: async (options: IHttpRequestOptions) => {
+				requests.push(options);
 				return route(options);
 			},
 		},
@@ -197,7 +210,10 @@ describe('WebsiteContacts.execute', () => {
 			routes,
 		});
 		await expect(result).rejects.toThrow();
-		expect(requests.some((r) => r.url.endsWith('/v2/actor-runs/run1/abort'))).toBe(true);
+		await vi.waitFor(() => {
+			const abort = requests.find((r) => r.url.endsWith('/v2/actor-runs/run1/abort'));
+			expect(abort?.headers).toMatchObject({ Authorization: 'Bearer apify-token' });
+		});
 	});
 
 	it('marks AI tool calls and trims empty lists', async () => {

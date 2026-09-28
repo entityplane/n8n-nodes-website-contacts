@@ -75,10 +75,6 @@ export class ApifyClient {
 		}
 	}
 
-	async abortRun(runId: string): Promise<void> {
-		await this.call({ method: 'POST', path: `/v2/actor-runs/${runId}/abort` });
-	}
-
 	async listItems(datasetId: string, qs: IDataObject = {}): Promise<IDataObject[]> {
 		const rows: IDataObject[] = [];
 		for (let offset = 0; ; offset += PAGE_SIZE) {

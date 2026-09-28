@@ -141,11 +141,3 @@ describe('getRecord', () => {
 		expect(await client.getRecord('kv1', 'OUTPUT')).toBeNull();
 	});
 });
-
-describe('abortRun', () => {
-	it('asks Apify to abort the run', async () => {
-		const { client, requests } = fakeApi([run('ABORTING')]);
-		await client.abortRun('run1');
-		expect(requests[0]).toMatchObject({ method: 'POST', path: '/v2/actor-runs/run1/abort' });
-	});
-});

@@ -36,6 +36,36 @@ function leftOut(summary: IDataObject | null): boolean {
 	return (typeof freePlan?.omitted === 'number' && freePlan.omitted > 0) || !!summary?.unscheduled;
 }
 
+/** The access token of the selected Apify credential, API key or OAuth2. */
+async function apifyToken(
+	this: IExecuteFunctions,
+	credentialType: string,
+): Promise<string | undefined> {
+	const credentials = await this.getCredentials(credentialType);
+	const token =
+		credentials.apiKey ?? (credentials.oauthTokenData as IDataObject | undefined)?.access_token;
+	return typeof token === 'string' ? token : undefined;
+}
+
+/**
+ * Aborts the Apify run of a stopped execution. n8n cancels every authenticated request of a
+ * stopped execution before it is sent, so this one request goes through the plain HTTP helper.
+ */
+async function abortStoppedRun(
+	this: IExecuteFunctions,
+	credentialType: string,
+	runId: string,
+): Promise<void> {
+	const token = await apifyToken.call(this, credentialType);
+	if (!token) return;
+	await this.helpers.httpRequest({
+		method: 'POST',
+		url: `https://api.apify.com/v2/actor-runs/${runId}/abort`,
+		headers: { Authorization: `Bearer ${token}`, 'x-apify-integration-platform': 'n8n' },
+		json: true,
+	});
+}
+
 export class WebsiteContacts implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Website Contact & Socials Extractor',
@@ -189,7 +219,7 @@ export class WebsiteContacts implements INodeType {
 			const runId = run.id;
 			this.getExecutionCancelSignal?.()?.addEventListener(
 				'abort',
-				() => void client.abortRun(runId).catch(() => undefined),
+				() => void abortStoppedRun.call(this, authentication, runId).catch(() => undefined),
 				{ once: true },
 			);
 
