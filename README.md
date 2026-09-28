@@ -16,8 +16,7 @@ numbers, it returns links to LinkedIn, Facebook, Instagram, X/Twitter, YouTube, 
 Telegram, Threads, Pinterest, Reddit, Snapchat, Discord, Twitch, GitHub, CodePen, Google Maps,
 Yelp and Tripadvisor.
 
-[Use cases](#use-cases) · [Installation](#installation) · [Operations](#operations) ·
-[Credentials](#credentials) · [Usage](#usage) · [Output](#output) · [Pricing](#pricing) ·
+[Use cases](#use-cases) · [Installation](#installation) · [Credentials](#credentials) · [Usage](#usage) · [Output](#output) · [Pricing](#pricing) ·
 [Compatibility](#compatibility) · [Resources](#resources)
 
 ## Use cases
