@@ -1,0 +1,68 @@
+{
+	"name": "@entityplane/n8n-nodes-website-contacts",
+	"version": "0.1.0",
+	"description": "n8n node that extracts emails, phone numbers and social media links from company websites",
+	"license": "MIT",
+	"homepage": "https://github.com/entityplane/n8n-nodes-website-contacts#readme",
+	"keywords": [
+		"n8n-community-node-package",
+		"n8n",
+		"email extractor",
+		"contact extractor",
+		"phone numbers",
+		"social media links",
+		"lead generation",
+		"website scraper",
+		"apify"
+	],
+	"author": {
+		"name": "Nikita Madebeykin",
+		"email": "62620810+digitalcortex@users.noreply.github.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/entityplane/n8n-nodes-website-contacts.git"
+	},
+	"bugs": {
+		"url": "https://github.com/entityplane/n8n-nodes-website-contacts/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"test": "vitest run",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist",
+		"!dist/tsconfig.tsbuildinfo"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/ApifyApi.credentials.js",
+			"dist/credentials/ApifyOAuth2Api.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/WebsiteContacts/WebsiteContacts.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "*",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"release-it": "^19.0.4",
+		"typescript": "5.9.2",
+		"vitest": "^4.1.11"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}

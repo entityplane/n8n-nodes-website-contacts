@@ -1,0 +1,32 @@
+{
+	"node": "@entityplane/n8n-nodes-website-contacts",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Sales", "Marketing", "Data & Storage"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/entityplane/n8n-nodes-website-contacts#credentials"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/entityplane/n8n-nodes-website-contacts#readme"
+			}
+		]
+	},
+	"alias": [
+		"email",
+		"phone",
+		"contact",
+		"social",
+		"linkedin",
+		"lead",
+		"enrich",
+		"extract",
+		"scrape",
+		"website",
+		"apify",
+		"entityplane"
+	]
+}
