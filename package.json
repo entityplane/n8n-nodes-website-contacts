@@ -41,6 +41,7 @@
 	},
 	"files": [
 		"dist",
+		"!dist/docs",
 		"!dist/tsconfig.tsbuildinfo"
 	],
 	"n8n": {
